@@ -8,7 +8,7 @@
 //define("PDO_USER", "root");
 //define("PDO_PASS", "root");
 
-class IgnitePDO {
+class GenericPDO {
 
 	  private $db;
 

@@ -2,7 +2,7 @@
 
 require "oauth2/PDOOAuth2.inc";
 
-class ISMOAuth2Server extends PDOOAuth2 {
+class GenericOAuth2Server extends PDOOAuth2 {
 	public function finishClientAuthorization2($params = array()) {
 	    $params += array(
 	      'scope' => NULL,

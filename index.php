@@ -29,8 +29,8 @@ header('X-XRDS-Location: http://'. $_SERVER['SERVER_NAME'].'/services.xrds.php')
 //4) go nuts on api requests
 
 
-require_once 'library/ISMOAuthServer.php';
-require_once 'library/ISMOAuth2Server.php';
+require_once 'library/GenericOAuthServer.php';
+require_once 'library/GenericOAuth2Server.php';
 /*
  * Initialize OAuth store
  */
@@ -39,7 +39,7 @@ require_once 'library/oauth/OAuthStore.php';
 OAuthStore::instance('Mongo', array('conn' => $oauthDB));
 
 
-//$server = new ISMOAuthServer();
+//$server = new GenericOAuthServer();
 //require_once("library/oauth/OAuth.php");
 //require_once("library/oauth/OAuth_TestServer.php");
 
@@ -97,12 +97,12 @@ $app->get('/', function () {
 $app->get('/entries/:limit', function ($limit) {
 	
 	/** oauth 1.0
-	* $server = new ISMOAuthServer();
+	* $server = new GenericOAuthServer();
 	* if($server->checkAuth()){
 	*/
 
 	// oauth 2
-	$oauth = new ISMOAuth2Server();
+	$oauth = new GenericOAuth2Server();
 	if ($oauth->verifyAccessToken()){
 		$idb = new IgnitePDO($oauth->getDBConnect($oauth->getTokenFromHeader()));
 		sendSlimJson($idb->getEntries($limit));
@@ -114,7 +114,7 @@ $app->get('/entries/:limit', function ($limit) {
 $app->get('/entry/:id', function ($id) {
 	//$entry = $idb->executeSQL("SELECT * FROM entries WHERE ID=$id");
 	// oauth 2
-	$oauth = new ISMOAuth2Server();
+	$oauth = new GenericOAuth2Server();
 	if ($oauth->verifyAccessToken()){
 		$idb = new IgnitePDO($oauth->getDBConnect($oauth->getTokenFromHeader()));
 		sendSlimJson($idb->getEntry($id));
@@ -129,7 +129,7 @@ $app->get('/entry/:id', function ($id) {
 *
 */
 $app->get('/2.0', function () {
-	$oauth = new ISMOAuth2Server();
+	$oauth = new GenericOAuth2Server();
 	$auth_params = $oauth->getAuthorizeParams();
 	if ($auth_params){
 		$accessArray = array_merge($_GET,$oauth->finishClientAuthorization2($_GET));
@@ -144,7 +144,7 @@ $app->get('/2.0/register', function () {
 });
 
 $app->post('/2.0/register', function () {
-	$oauth = new ISMOAuth2Server();
+	$oauth = new GenericOAuth2Server();
 	$oauth->addClient($_POST["client_id"], $_POST["client_secret"], $_POST["redirect_uri"]);
 });
 
@@ -173,18 +173,18 @@ $app->post('/1.0/register', function () {
 });
 
 $app->post('/1.0/request_token', function () {
-	$server = new ISMOAuthServer();
+	$server = new GenericOAuthServer();
 	echo serialize($server->requestToken());
 });
 
 $app->get('/1.0/request_token', function () {
-	$server = new ISMOAuthServer();
+	$server = new GenericOAuthServer();
 	echo serialize($server->requestToken());
 });
 
 $app->get('/1.0/authorize', function () {
 	//assert_logged_in();
-	$server = new ISMOAuthServer();
+	$server = new GenericOAuthServer();
 	try{
 		$server->authorizeVerify();
 		echo serialize($server->authorizeFinish(true, 1));
@@ -195,12 +195,12 @@ $app->get('/1.0/authorize', function () {
 
 
 $app->post('/1.0/access_token', function () {
-	$server = new ISMOAuthServer();
+	$server = new GenericOAuthServer();
 	echo serialize($server->accessToken());
 });
 
 $app->get('/1.0/access_token', function () {
-	$server = new ISMOAuthServer();
+	$server = new GenericOAuthServer();
 	echo serialize($server->accessToken());
 });
 

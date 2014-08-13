@@ -2,7 +2,7 @@
 
 require_once 'oauth/OAuthServer.php';
 
-class ISMOAuthServer extends OAuthServer{
+class GenericOAuthServer extends OAuthServer{
 	
 	public function requestToken () {
 		OAuthRequestLogger::start($this);
